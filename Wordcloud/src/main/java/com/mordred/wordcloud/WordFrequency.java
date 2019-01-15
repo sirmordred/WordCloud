@@ -2,6 +2,9 @@ package com.mordred.wordcloud;
 
 import android.content.Context;
 
+import com.mordred.wordcloud.stemmer.SnowballStemmer;
+import com.mordred.wordcloud.stemmer.Stemmer;
+
 import java.util.*;
 
 public class WordFrequency {
@@ -9,14 +12,10 @@ public class WordFrequency {
     private String document = null;
     private static List<String> stopWords = new ArrayList<>();
     private int minWordLength = 1;
-    private String stemmer = null;
+    private SnowballStemmer stemmer = null;
 
     public WordFrequency() {
         // empty constructor
-    }
-
-    public WordFrequency(String document) {
-        this.document = document;
     }
 
     public void processAndInsertWord(String word) {
@@ -25,7 +24,7 @@ public class WordFrequency {
             String cleanWord = dirtyWord.replaceAll("[^\\p{L} ]", "").toLowerCase();
             if (cleanWord.length() > minWordLength) {
                 if (stemmer != null) {
-                    cleanWord = stem(cleanWord);
+                    cleanWord = stemmer.stem(cleanWord);
                 }
                 if (!isStopWord(cleanWord)) {
                     wordMap.add(cleanWord);
@@ -108,6 +107,7 @@ public class WordFrequency {
     }
 
     public void setStemmer(String lang) {
-        this.stemmer = lang;
+        this.stemmer = new SnowballStemmer();
+        this.stemmer.setLanguage(lang);
     }
 }
