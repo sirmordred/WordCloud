@@ -1,13 +1,8 @@
 package com.mordred.wordcloud;
 
-import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.Rect;
-import android.os.Environment;
-import android.util.Log;
 
-import java.io.File;
-import java.io.FileOutputStream;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -93,27 +88,5 @@ public class WordCloud {
 
     public void setDefaultBackgroundColor(int defaultBackgroundColor) {
         this.defaultBackgroundColor = defaultBackgroundColor;
-    }
-
-    public void saveImage(Bitmap finalBitmap, String fn) {
-        String root = Environment.getExternalStorageDirectory().getAbsolutePath();
-        File myDir = new File(root + "/saved_images_png_p");
-        if (!myDir.exists())
-            myDir.mkdirs();
-
-        String fname = "Shutta_"+ fn +".png";
-
-        File file = new File(myDir, fname);
-        if (file.exists())
-            file.delete ();
-        try {
-            FileOutputStream out = new FileOutputStream(file);
-            finalBitmap.compress(Bitmap.CompressFormat.PNG, 100, out);
-            out.flush();
-            out.close();
-            Log.e("PNGGGG","DONEEEEEEEEEEEEEEEEE");
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
     }
 }

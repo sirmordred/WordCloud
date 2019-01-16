@@ -39,4 +39,12 @@ public class Word {
     public Rect getWordRect() {
         return wordRect;
     }
+
+    public float getX() { // x pos for drawing into canvas
+        return (float) wordRect.left;
+    }
+
+    public float getY() { // y pos for drawing into canvas
+        return wordRect.top + wordRect.height() - wordPaint.descent();
+    }
 }
