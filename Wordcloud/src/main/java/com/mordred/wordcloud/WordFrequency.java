@@ -11,6 +11,7 @@ public class WordFrequency {
     private static CountMap wordMap = new CountMap();
     private String document = null;
     private static List<String> stopWords = new ArrayList<>();
+    private Map<String, Integer> wordFreqList = new HashMap<>();
     private int minWordLength = 1;
     private SnowballStemmer stemmer = null;
 
@@ -67,18 +68,21 @@ public class WordFrequency {
             return null;
         }
 
+        if (wordFreqList.size() == 0) {
+            wordFreqList.putAll(getTopNWords(nWord));
+        }
+
         List<Word> finalWordList = new ArrayList<>();
-
-        // TODO get min TF and max TF
-        // TODO generate word object by giving appropriate textSize
-
-        Map<String, Integer> finalWordMap = getTopNWords(nWord);
-        for (Map.Entry<String, Integer> entry : finalWordMap.entrySet()) {
+        for (Map.Entry<String, Integer> entry : wordFreqList.entrySet()) {
+            // TODO get min TF and max TF
+            // TODO generate word object by giving appropriate textSize
+            // TODO and fill finalWordList
             String key = entry.getKey();
             int value = entry.getValue();
             System.out.println(key + " == " + value);
         }
-        return null;
+
+        return finalWordList;
     }
 
     private boolean isStopWord(String word) {
@@ -109,5 +113,9 @@ public class WordFrequency {
     public void setStemmer(String lang) {
         this.stemmer = new SnowballStemmer();
         this.stemmer.setLanguage(lang);
+    }
+
+    public void setWordFreqList(Map<String, Integer> defWordFreqList) {
+        this.wordFreqList.putAll(defWordFreqList);
     }
 }
