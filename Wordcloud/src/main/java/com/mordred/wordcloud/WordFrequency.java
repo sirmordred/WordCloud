@@ -94,12 +94,16 @@ public class WordFrequency {
 
     public void setDefaultStopWords(Context ctx, String lang) { // WILL BE CALLED ONLY ONCE
         if (stopWords.size() == 0) {
+            int stopWordFileId = getStopWordFileId(lang);
+            if (stopWordFileId == 0) {
+                return;
+            }
             StringBuilder text = new StringBuilder();
             InputStream is = null;
             InputStreamReader isr = null;
             BufferedReader br = null;
             try {
-                is = ctx.getResources().openRawResource(getStopWordFileId(lang));
+                is = ctx.getResources().openRawResource(stopWordFileId);
                 isr = new InputStreamReader(is);
                 br = new BufferedReader(isr);
 
@@ -132,7 +136,7 @@ public class WordFrequency {
                 text.deleteCharAt(0); // remove first [ from json
                 text.deleteCharAt(text.length() - 1); // remove last [ from json
 
-                stopWords.addAll(Arrays.asList(text.toString().split("\\.")));
+                stopWords.addAll(Arrays.asList(text.toString().split(",")));
             }
         }
     }
