@@ -3,8 +3,11 @@ package com.mordred.wordcloud;
 import android.content.Context;
 
 import com.mordred.wordcloud.stemmer.SnowballStemmer;
-import com.mordred.wordcloud.stemmer.Stemmer;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.*;
 
 public class WordFrequency {
@@ -90,9 +93,47 @@ public class WordFrequency {
     }
 
     public void setDefaultStopWords(Context ctx, String lang) { // WILL BE CALLED ONLY ONCE
-        // TODO get stopword from asset, read JSON and fill stopwordlist List
         if (stopWords.size() == 0) {
+            StringBuilder text = new StringBuilder();
+            InputStream is = null;
+            InputStreamReader isr = null;
+            BufferedReader br = null;
+            try {
+                is = ctx.getResources().openRawResource(getStopWordFileId(lang));
+                isr = new InputStreamReader(is);
+                br = new BufferedReader(isr);
 
+                String line;
+                while ((line = br.readLine()) != null) {
+                    text.append(line);
+                    text.append('\n');
+                }
+            } catch (IOException e) {
+                // empty
+            } finally {
+                try {
+                    if (br != null) {
+                        br.close();
+                    }
+
+                    if (isr != null) {
+                        isr.close();
+                    }
+
+                    if (is != null) {
+                        is.close();
+                    }
+                } catch (IOException e) {
+                    // empty
+                }
+            }
+
+            if (text.length() > 2) {
+                text.deleteCharAt(0); // remove first [ from json
+                text.deleteCharAt(text.length() - 1); // remove last [ from json
+
+                stopWords.addAll(Arrays.asList(text.toString().split("\\.")));
+            }
         }
     }
 
@@ -117,5 +158,112 @@ public class WordFrequency {
 
     public void setWordFreqList(Map<String, Integer> defWordFreqList) {
         this.wordFreqList.putAll(defWordFreqList);
+    }
+
+    private int getStopWordFileId(String lang) {
+        switch (lang) {
+            case "hy":
+                return R.raw.hy;
+            case "zh":
+                return R.raw.zh;
+            case "tr":
+                return R.raw.tr;
+            case "sl":
+                return R.raw.sl;
+            case "hu":
+                return R.raw.hu;
+            case "mr":
+                return R.raw.mr;
+            case "la":
+                return R.raw.la;
+            case "bn":
+                return R.raw.bn;
+            case "ha":
+                return R.raw.ha;
+            case "yo":
+                return R.raw.yo;
+            case "nl":
+                return R.raw.nl;
+            case "st":
+                return R.raw.st;
+            case "ja":
+                return R.raw.ja;
+            case "de":
+                return R.raw.de;
+            case "ru":
+                return R.raw.ru;
+            case "pl":
+                return R.raw.pl;
+            case "fi":
+                return R.raw.fi;
+            case "eo":
+                return R.raw.eo;
+            case "sk":
+                return R.raw.sk;
+            case "pt":
+                return R.raw.pt;
+            case "en":
+                return R.raw.en;
+            case "it":
+                return R.raw.it;
+            case "hr":
+                return R.raw.hr;
+            case "zu":
+                return R.raw.zu;
+            case "et":
+                return R.raw.et;
+            case "ga":
+                return R.raw.ga;
+            case "fr":
+                return R.raw.fr;
+            case "br":
+                return R.raw.br;
+            case "el":
+                return R.raw.el;
+            case "bg":
+                return R.raw.bg;
+            case "ro":
+                return R.raw.ro;
+            case "hi":
+                return R.raw.hi;
+            case "ca":
+                return R.raw.ca;
+            case "ko":
+                return R.raw.ko;
+            case "eu":
+                return R.raw.eu;
+            case "gl":
+                return R.raw.gl;
+            case "he":
+                return R.raw.he;
+            case "fa":
+                return R.raw.fa;
+            case "cs":
+                return R.raw.cs;
+            case "id":
+                return R.raw.id;
+            case "lv":
+                return R.raw.lv;
+            case "af":
+                return R.raw.af;
+            case "sw":
+                return R.raw.sw;
+            case "da":
+                return R.raw.da;
+            case "th":
+                return R.raw.th;
+            case "sv":
+                return R.raw.sv;
+            case "es":
+                return R.raw.es;
+            case "ar":
+                return R.raw.ar;
+            case "nb":
+                return R.raw.nb;
+            case "so":
+                return R.raw.so;
+            default:
+                return 0;
+        }
     }
 }
