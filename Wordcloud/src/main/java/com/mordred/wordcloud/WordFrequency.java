@@ -164,6 +164,11 @@ public class WordFrequency {
         this.wordFreqList.putAll(defWordFreqList);
     }
 
+    private float getTextSize(int wordCount, int largestWordCount, int maxFontSize, int minFontSize) {
+        return (float) (largestWordCount > 1 ? Math.log(wordCount) / Math.log(largestWordCount) *
+                (maxFontSize - minFontSize) + minFontSize : minFontSize);
+    }
+
     private int getStopWordFileId(String lang) {
         switch (lang) {
             case "hy":
