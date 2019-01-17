@@ -11,10 +11,18 @@ public class Word {
     private Paint wordPaint;
 
     public Word(String word, float wordSize, int wordColor) {
-        this(word, wordSize, wordColor, 255);
+        this(word, wordSize, Typeface.create(Typeface.SANS_SERIF, Typeface.BOLD), wordColor, 255);
     }
 
-    public Word(String word, float wordSize, int wordColor, int wordColorAlpha) {
+    public Word(String word, float wordSize, int wordColor,  int wordColorAlpha) {
+        this(word, wordSize, Typeface.create(Typeface.SANS_SERIF, Typeface.BOLD), wordColor, wordColorAlpha);
+    }
+
+    public Word(String word, float wordSize, Typeface wordTypeFace, int wordColor) {
+        this(word, wordSize, wordTypeFace, wordColor, 255);
+    }
+
+    public Word(String word, float wordSize, Typeface wordTypeFace, int wordColor, int wordColorAlpha) {
         this.word = word;
         this.wordSize = wordSize;
 
@@ -25,7 +33,7 @@ public class Word {
         wordPaint.setAlpha(wordColorAlpha);
         wordPaint.setTextAlign(Paint.Align.LEFT);
         wordPaint.setStyle(Paint.Style.FILL);
-        wordPaint.setTypeface(Typeface.create(Typeface.SANS_SERIF, Typeface.BOLD));
+        wordPaint.setTypeface(wordTypeFace);
         wordPaint.setTextSize(wordSize);
 
         // calculate rect
@@ -50,6 +58,7 @@ public class Word {
     }
 
     public float getY() { // y pos for drawing into canvas
-        return wordRect.top + wordRect.height() - Math.round(wordPaint.descent() / 2);
+        //return wordRect.top + wordRect.height() - Math.round(wordPaint.descent() / 2); // TODO improve calibration
+        return wordRect.height();
     }
 }

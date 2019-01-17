@@ -5,6 +5,7 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Rect;
+import android.graphics.Typeface;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -24,6 +25,7 @@ public class WordCloud {
     private int maxColorAlphaValue = 255;
     private int minColorAlphaValue = 50;
     private boolean wordColorOpacityAuto = false;
+    private Typeface customTypeFace = null;
 
     public WordCloud() {
         // empty constructor
@@ -128,11 +130,21 @@ public class WordCloud {
                     int calculatedAlphaVal = getTextColorAlpha(entry.getValue(), largestWordCnt,
                             this.maxColorAlphaValue, this.minColorAlphaValue);
 
-                    finalWordList.add(new Word(entry.getKey(), calculatedTextSize,
-                            defaultWordColor, calculatedAlphaVal));
+                    if (customTypeFace != null) {
+                        finalWordList.add(new Word(entry.getKey(), calculatedTextSize, customTypeFace,
+                                defaultWordColor, calculatedAlphaVal));
+                    } else {
+                        finalWordList.add(new Word(entry.getKey(), calculatedTextSize,
+                                defaultWordColor, calculatedAlphaVal));
+                    }
                 } else {
-                    finalWordList.add(new Word(entry.getKey(), calculatedTextSize,
-                            defaultWordColor));
+                    if (customTypeFace != null) {
+                        finalWordList.add(new Word(entry.getKey(), calculatedTextSize, customTypeFace,
+                                defaultWordColor));
+                    } else {
+                        finalWordList.add(new Word(entry.getKey(), calculatedTextSize,
+                                defaultWordColor));
+                    }
                 }
             }
 
@@ -219,5 +231,9 @@ public class WordCloud {
 
     public void setWordColorOpacityAuto(boolean wordColorOpacityAuto) {
         this.wordColorOpacityAuto = wordColorOpacityAuto;
+    }
+
+    public void setCustomTypeFace(Typeface customTypeFace) {
+        this.customTypeFace = customTypeFace;
     }
 }
