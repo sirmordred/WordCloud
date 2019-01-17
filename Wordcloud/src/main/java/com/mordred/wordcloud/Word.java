@@ -58,7 +58,6 @@ public class Word {
     }
 
     public float getY() { // y pos for drawing into canvas
-        //return wordRect.top + wordRect.height() - Math.round(wordPaint.descent() / 2); // TODO improve calibration
-        return wordRect.height();
+        return wordRect.top + wordRect.height() - Math.round(wordPaint.descent() / 2); // TODO improve calibration
     }
 }
