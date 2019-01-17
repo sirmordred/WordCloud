@@ -50,6 +50,6 @@ public class Word {
     }
 
     public float getY() { // y pos for drawing into canvas
-        return wordRect.top + wordRect.height() - wordPaint.descent();
+        return wordRect.top + wordRect.height() - Math.round(wordPaint.descent() / 2);
     }
 }
