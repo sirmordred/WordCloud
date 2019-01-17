@@ -19,7 +19,7 @@ public class WordCloud {
     private int defaultWordColor = Color.BLACK;
     private int defaultBackgroundColor = Color.WHITE;
     private int calculatedHeight = 0;
-    private int maxFontSize = 60;
+    private int maxFontSize = 40;
     private int minFontSize = 10;
 
     public WordCloud() {
@@ -162,7 +162,23 @@ public class WordCloud {
         this.defaultWordColor = defaultWordColor;
     }
 
+    public void setDimenWidth(int dimenWidth) {
+        this.dimenWidth = dimenWidth;
+    }
+
+    public void setDimenHeight(int dimenHeight) {
+        this.dimenHeight = dimenHeight;
+    }
+
     public void setDefaultBackgroundColor(int defaultBackgroundColor) {
         this.defaultBackgroundColor = defaultBackgroundColor;
+    }
+
+    public void setMaxFontSize(int maxFontSize) {
+        this.maxFontSize = maxFontSize;
+    }
+
+    public void setMinFontSize(int minFontSize) {
+        this.minFontSize = minFontSize;
     }
 }

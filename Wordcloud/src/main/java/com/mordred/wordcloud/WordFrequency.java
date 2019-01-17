@@ -36,7 +36,7 @@ public class WordFrequency {
         }
     }
 
-    private Map<String, Integer> generate() {
+    public Map<String, Integer> generate() {
         List<Map.Entry<String, CountMap.MutableInt>> entries = new ArrayList<>(wordMap.entrySet());
         sortAsDescending(entries);
         Map<String, Integer> sortedMap = new HashMap<>();
@@ -47,7 +47,7 @@ public class WordFrequency {
     }
 
     // DONE
-    private Map<String, Integer> generate(int nWord) {
+    public Map<String, Integer> generate(int nWord) {
         int n = 1;
         if (nWord >= 1 && nWord <= wordMap.size()) {
             n = nWord;
