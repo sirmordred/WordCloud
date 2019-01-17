@@ -6,6 +6,24 @@ WordCloud is an android library for the processing text and generating wordcloud
 
 You can directly import the WordCloud library from JCenter/Maven or Gradle:
 
+Maven:
+
+```xml
+<dependency>
+    <groupId>com.mordred.wordcloud</groupId>
+    <artifactId>Wordcloud</artifactId>
+    <version>1.5</version>
+</dependency>
+```
+
+Gradle:
+
+```
+dependencies {
+    compile 'com.mordred.wordcloud:Wordcloud:1.5'
+}
+```
+
 ### Current Features
 
 - It currently supports rectangular wordcloud
