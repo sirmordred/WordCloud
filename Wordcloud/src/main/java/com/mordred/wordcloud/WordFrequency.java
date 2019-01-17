@@ -14,7 +14,6 @@ public class WordFrequency {
     private static CountMap wordMap = new CountMap();
     private String document = null;
     private static List<String> stopWords = new ArrayList<>();
-    private Map<String, Integer> wordFreqList = new HashMap<>();
     private int minWordLength = 1;
     private SnowballStemmer stemmer = null;
 
@@ -22,7 +21,7 @@ public class WordFrequency {
         // empty constructor
     }
 
-    public void processAndInsertWord(String word) {
+    public void insertWord(String word) {
         String[] dirtyWordArr = word.split("\\s+");
         for (String dirtyWord: dirtyWordArr) {
             String cleanWord = dirtyWord.replaceAll("[^\\p{L} ]", "").toLowerCase();
@@ -37,8 +36,18 @@ public class WordFrequency {
         }
     }
 
+    private Map<String, Integer> generate() {
+        List<Map.Entry<String, CountMap.MutableInt>> entries = new ArrayList<>(wordMap.entrySet());
+        sortAsDescending(entries);
+        Map<String, Integer> sortedMap = new HashMap<>();
+        for (int i = 0; i < entries.size(); i++) {
+            sortedMap.put(entries.get(i).getKey(), entries.get(i).getValue().get());
+        }
+        return sortedMap;
+    }
+
     // DONE
-    private Map<String, Integer> getTopNWords(int nWord) {
+    private Map<String, Integer> generate(int nWord) {
         int n = 1;
         if (nWord >= 1 && nWord <= wordMap.size()) {
             n = nWord;
@@ -46,13 +55,7 @@ public class WordFrequency {
             n = wordMap.size();
         }
         List<Map.Entry<String, CountMap.MutableInt>> entries = new ArrayList<>(wordMap.entrySet());
-        Collections.sort(entries, Collections.reverseOrder(new Comparator<Map.Entry<String,
-                CountMap.MutableInt>>() {
-            public int compare(Map.Entry<String, CountMap.MutableInt> left,
-                               Map.Entry<String, CountMap.MutableInt> right) {
-                return Integer.compare(left.getValue().get(), right.getValue().get());
-            }
-        }));
+        sortAsDescending(entries);
         Map<String, Integer> sortedMap = new LinkedHashMap<>(n);
         for (int i = 0; i < n; i++) {
             sortedMap.put(entries.get(i).getKey(), entries.get(i).getValue().get());
@@ -60,32 +63,14 @@ public class WordFrequency {
         return sortedMap;
     }
 
-    public List<Word> generate(int nWord) {
-        if (document == null) {
-            return null;
-        } else {
-            processAndInsertWord(document);
-        }
-
-        if (wordMap.size() == 0) {
-            return null;
-        }
-
-        if (wordFreqList.size() == 0) {
-            wordFreqList.putAll(getTopNWords(nWord));
-        }
-
-        List<Word> finalWordList = new ArrayList<>();
-        for (Map.Entry<String, Integer> entry : wordFreqList.entrySet()) {
-            // TODO get min TF and max TF
-            // TODO generate word object by giving appropriate textSize
-            // TODO and fill finalWordList
-            String key = entry.getKey();
-            int value = entry.getValue();
-            System.out.println(key + " == " + value);
-        }
-
-        return finalWordList;
+    private void sortAsDescending(List<Map.Entry<String, CountMap.MutableInt>> unsortedList) {
+        Collections.sort(unsortedList, Collections.reverseOrder(new Comparator<Map.Entry<String,
+                CountMap.MutableInt>>() {
+            public int compare(Map.Entry<String, CountMap.MutableInt> left,
+                               Map.Entry<String, CountMap.MutableInt> right) {
+                return Integer.compare(left.getValue().get(), right.getValue().get());
+            }
+        }));
     }
 
     private boolean isStopWord(String word) {
@@ -157,16 +142,7 @@ public class WordFrequency {
 
     public void setStemmer(String lang) {
         this.stemmer = new SnowballStemmer();
-        this.stemmer.setLanguage(lang);
-    }
-
-    public void setWordFreqList(Map<String, Integer> defWordFreqList) {
-        this.wordFreqList.putAll(defWordFreqList);
-    }
-
-    private float getTextSize(int wordCount, int largestWordCount, int maxFontSize, int minFontSize) {
-        return (float) (largestWordCount > 1 ? Math.log(wordCount) / Math.log(largestWordCount) *
-                (maxFontSize - minFontSize) + minFontSize : minFontSize);
+        this.stemmer.setLanguage(lang); // TODO check return val
     }
 
     private int getStopWordFileId(String lang) {

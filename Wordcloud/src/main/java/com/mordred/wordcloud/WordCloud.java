@@ -1,51 +1,64 @@
 package com.mordred.wordcloud;
 
+import android.graphics.Bitmap;
+import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Rect;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class WordCloud {
-    private List<Word> wordList;
+    private Map<String, Integer> wordMap = new HashMap<>();
     private int dimenWidth = 480;
     private int dimenHeight = 640;
     private int defaultWordColor = Color.BLACK;
     private int defaultBackgroundColor = Color.WHITE;
+    private int calculatedHeight = 0;
+    private int maxFontSize = 60;
+    private int minFontSize = 10;
 
     public WordCloud() {
-        wordList = new ArrayList<>();
+        // empty constructor
     }
 
     public WordCloud(int dimenWidth, int dimenHeight) {
-        wordList = new ArrayList<>();
         this.dimenWidth = dimenWidth;
         this.dimenHeight = dimenHeight;
     }
 
-    public WordCloud(List<Word> wordList, int dimenWidth, int dimenHeight) {
-        this.wordList = wordList;
+    public WordCloud(Map<String, Integer> wordMap, int dimenWidth, int dimenHeight) {
+        this.wordMap.putAll(wordMap);
         this.dimenWidth = dimenWidth;
         this.dimenHeight = dimenHeight;
     }
 
-    public WordCloud(List<Word> wordList, int dimenWidth, int dimenHeight, int defaultWordColor, int defaultBackgroundColor) {
-        this.wordList = wordList;
+    public WordCloud(Map<String, Integer> wordMap, int dimenWidth, int dimenHeight, int defaultWordColor, int defaultBackgroundColor) {
+        this.wordMap.putAll(wordMap);
         this.dimenWidth = dimenWidth;
         this.dimenHeight = dimenHeight;
         this.defaultWordColor = defaultWordColor;
         this.defaultBackgroundColor = defaultBackgroundColor;
     }
 
-    public void generate() { // TODO it will return bitmap object
+    /*
+    -1: Failure
+    0: too large
+    1: Normal, fitting, perfect
+     */
+    private int fit(List<Word> wordList) {
         if (wordList.size() > 0) {
             for (Word w2: wordList) { // Place every rect to 0,0 for init
                 w2.getWordRect().offsetTo(0,0);
             }
-            for(int h = 1; h < wordList.size(); h++) { // TODO shuffle wordlist
+            for(int h = 1; h < wordList.size(); h++) {
                 // if intersect increment x but if x + width >= dimenWidth then make x = 0 and increment y
                 // first rect will stay in 0,0
-                int y = 0; // TODO dimenHeight is still not bounded
+                int y = 0;
                 for (int x = 0; x < dimenWidth; x++) {
                     // set loc first
                     if (x + wordList.get(h).getWordRect().width() > dimenWidth) {
@@ -53,17 +66,32 @@ public class WordCloud {
                         x = 0;
                         continue;
                     }
-                    if (!isWordIntersectWithOthers(wordList.get(h))) {
+                    if (!isWordIntersectWithOthers(wordList.get(h), wordList)) {
                         break;
                     } else {
                         wordList.get(h).getWordRect().offsetTo(x, y);
                     }
                 }
             }
+            int cHeight = 0;
+            for (Word w3: wordList) {
+                if (w3.getWordRect().bottom > cHeight) {
+                    cHeight = w3.getWordRect().bottom;
+                }
+            }
+            calculatedHeight = cHeight;
+            if (calculatedHeight > dimenHeight) {
+                // it means its too large to fit so decrease font size
+                return 0;
+            } else {
+                // it means its perfectly fit or too small so align it to center
+                return 1;
+            }
         }
+        return -1;
     }
 
-    private boolean isWordIntersectWithOthers(Word w) {
+    private boolean isWordIntersectWithOthers(Word w, List<Word> wordList) {
         if (wordList.size() > 0) {
             for (Word wd: wordList) {
                 if (!w.equals(wd) && Rect.intersects(w.getWordRect(), wd.getWordRect())) {
@@ -74,12 +102,60 @@ public class WordCloud {
         return false;
     }
 
-    public List<Word> getWordList() {
-        return wordList;
+    public Bitmap generate() { // TODO shuffle wordlist
+        if (wordMap.size() == 0) {
+            return null;
+        }
+
+        List<Word> finalWordList = new ArrayList<>();
+
+        List<Map.Entry<String, Integer>> wordMapEntries = new ArrayList<>(wordMap.entrySet());
+        sortAsDescending(wordMapEntries);
+        int largestWordCnt = wordMapEntries.get(0).getValue();
+
+        for (int newMaxFontSize = this.maxFontSize; newMaxFontSize > this.minFontSize; newMaxFontSize--) {
+            finalWordList.clear();
+            for (Map.Entry<String, Integer> entry : wordMap.entrySet()) {
+                float calculatedTextSize = getTextSize(entry.getValue(),largestWordCnt,
+                        newMaxFontSize, this.minFontSize);
+
+                finalWordList.add(new Word(entry.getKey(), calculatedTextSize, defaultWordColor));
+            }
+
+            int fitResult = fit(finalWordList);
+            if (fitResult == 1) {
+                break;
+            }
+        }
+
+        // draw it
+        Bitmap retBitmap = Bitmap.createBitmap(dimenWidth + 10,dimenHeight + 10,Bitmap.Config.ARGB_8888); // TODO +10 for stability, remove them in future
+        Canvas retBitmapCanvas = new Canvas(retBitmap);
+        retBitmapCanvas.drawColor(defaultBackgroundColor); // background
+
+        for (Word wordWillBeDrawed: finalWordList) {
+            retBitmapCanvas.drawText(wordWillBeDrawed.getWord(),
+                    wordWillBeDrawed.getX(),
+                    wordWillBeDrawed.getY(),
+                    wordWillBeDrawed.getWordPaint());
+        }
+
+        return retBitmap;
     }
 
-    public void addWord(Word w) {
-        wordList.add(w);
+    private void sortAsDescending(List<Map.Entry<String, Integer>> unsortedList) {
+        Collections.sort(unsortedList, Collections.reverseOrder(new Comparator<Map.Entry<String,
+                Integer>>() {
+            public int compare(Map.Entry<String, Integer> left,
+                               Map.Entry<String, Integer> right) {
+                return Integer.compare(left.getValue(), right.getValue());
+            }
+        }));
+    }
+
+    private float getTextSize(int wordCount, int largestWordCount, int maxFontSize, int minFontSize) {
+        return (float) (largestWordCount > 1 ? Math.log(wordCount) / Math.log(largestWordCount) *
+                (maxFontSize - minFontSize) + minFontSize : minFontSize);
     }
 
     public void setDefaultWordColor(int defaultWordColor) { // TODO otherwise every word will get random rgb
