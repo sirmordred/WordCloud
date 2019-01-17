@@ -11,6 +11,10 @@ public class Word {
     private Paint wordPaint;
 
     public Word(String word, float wordSize, int wordColor) {
+        this(word, wordSize, wordColor, 255);
+    }
+
+    public Word(String word, float wordSize, int wordColor, int wordColorAlpha) {
         this.word = word;
         this.wordSize = wordSize;
 
@@ -18,6 +22,7 @@ public class Word {
         wordPaint = new Paint();
         wordPaint.setAntiAlias(true);
         wordPaint.setColor(wordColor);
+        wordPaint.setAlpha(wordColorAlpha);
         wordPaint.setTextAlign(Paint.Align.LEFT);
         wordPaint.setStyle(Paint.Style.FILL);
         wordPaint.setTypeface(Typeface.create(Typeface.SANS_SERIF, Typeface.BOLD));

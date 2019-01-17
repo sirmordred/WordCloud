@@ -7,7 +7,6 @@ import android.graphics.Rect;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -21,6 +20,9 @@ public class WordCloud {
     private int calculatedHeight = 0;
     private int maxFontSize = 40;
     private int minFontSize = 10;
+    private int maxColorAlphaValue = 255;
+    private int minColorAlphaValue = 50;
+    private boolean wordColorOpacityAuto = false;
 
     public WordCloud() {
         // empty constructor
@@ -121,7 +123,16 @@ public class WordCloud {
                 float calculatedTextSize = getTextSize(entry.getValue(),largestWordCnt,
                         newMaxFontSize, this.minFontSize);
 
-                finalWordList.add(new Word(entry.getKey(), calculatedTextSize, defaultWordColor));
+                if (wordColorOpacityAuto) {
+                    int calculatedAlphaVal = getTextColorAlpha(entry.getValue(), largestWordCnt,
+                            this.maxColorAlphaValue, this.minColorAlphaValue);
+
+                    finalWordList.add(new Word(entry.getKey(), calculatedTextSize,
+                            defaultWordColor, calculatedAlphaVal));
+                } else {
+                    finalWordList.add(new Word(entry.getKey(), calculatedTextSize,
+                            defaultWordColor));
+                }
             }
 
             int fitResult = fit(finalWordList);
@@ -153,11 +164,12 @@ public class WordCloud {
                 (maxFontSize - minFontSize) + minFontSize : minFontSize);
     }
 
-    /* TODO like on getTextSize(), calculate word colors opacity by their frequency(count)
-    private int getTextColor(int wordCount, int largestWordCount,
-                              int maxFontSize, int minFontSize) {
-        return;
-    } */
+    private int getTextColorAlpha(int wordCount, int largestWordCount,
+                              int maxAlphaVal, int minAlphaVal) {
+
+        return (int) (largestWordCount > 1 ? Math.log(wordCount) / Math.log(largestWordCount) *
+                (maxAlphaVal - minAlphaVal) + minAlphaVal : minAlphaVal);
+    }
 
     public void setDefaultWordColor(int defaultWordColor) {
         this.defaultWordColor = defaultWordColor;
@@ -181,5 +193,17 @@ public class WordCloud {
 
     public void setMinFontSize(int minFontSize) {
         this.minFontSize = minFontSize;
+    }
+
+    public void setMaxColorAlphaValue(int maxColorAlphaValue) {
+        this.maxColorAlphaValue = maxColorAlphaValue;
+    }
+
+    public void setMinColorAlphaValue(int minColorAlphaValue) {
+        this.minColorAlphaValue = minColorAlphaValue;
+    }
+
+    public void setWordColorOpacityAuto(boolean wordColorOpacityAuto) {
+        this.wordColorOpacityAuto = wordColorOpacityAuto;
     }
 }
