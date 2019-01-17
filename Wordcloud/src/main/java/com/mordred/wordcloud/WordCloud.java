@@ -3,6 +3,7 @@ package com.mordred.wordcloud;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
+import android.graphics.Paint;
 import android.graphics.Rect;
 
 import java.util.ArrayList;
@@ -144,18 +145,31 @@ public class WordCloud {
         }
 
         // draw it
-        Bitmap retBitmap = Bitmap.createBitmap(dimenWidth,dimenHeight,Bitmap.Config.ARGB_8888);
-        Canvas retBitmapCanvas = new Canvas(retBitmap);
-        retBitmapCanvas.drawColor(defaultBackgroundColor); // background
+
+        Bitmap intermediateBmp =  Bitmap.createBitmap(dimenWidth,calculatedHeight + 1,
+                Bitmap.Config.ARGB_8888);
+        Canvas intermediateCnv = new Canvas(intermediateBmp);
+        intermediateCnv.drawColor(Color.TRANSPARENT);
 
         for (Word wordWillBeDrawed: finalWordList) {
-            retBitmapCanvas.drawText(wordWillBeDrawed.getWord(),
+            intermediateCnv.drawText(wordWillBeDrawed.getWord(),
                     wordWillBeDrawed.getX(),
                     wordWillBeDrawed.getY(),
                     wordWillBeDrawed.getWordPaint());
         }
 
-        return retBitmap;
+        Bitmap retBmp = Bitmap.createBitmap(dimenWidth,dimenHeight,Bitmap.Config.ARGB_8888);
+        Canvas retBmpCnv = new Canvas(retBmp);
+        retBmpCnv.drawColor(defaultBackgroundColor); // background
+
+        retBmpCnv.drawBitmap(intermediateBmp,
+                (retBmp.getWidth() - intermediateBmp.getWidth()) / 2,
+                (retBmp.getHeight() - intermediateBmp.getHeight()) / 2,
+                new Paint());
+
+        // TODO maybe call intermediateBmp.recycle() since its no more used
+
+        return retBmp;
     }
 
     private float getTextSize(int wordCount, int largestWordCount,
