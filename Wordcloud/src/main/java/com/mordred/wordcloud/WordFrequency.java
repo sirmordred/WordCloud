@@ -144,7 +144,9 @@ public class WordFrequency {
                 text.deleteCharAt(0); // remove first [ from json
                 text.deleteCharAt(text.length() - 1); // remove last [ from json
 
-                stopWords.addAll(Arrays.asList(text.toString().split(",")));
+                String stopwordsArr[] = text.toString().replace("\"","").
+                        split(",");
+                stopWords.addAll(Arrays.asList(stopwordsArr));
             }
         }
     }
@@ -165,7 +167,10 @@ public class WordFrequency {
 
     public void setStemmer(String lang) {
         this.stemmer = new SnowballStemmer();
-        this.stemmer.setLanguage(lang); // TODO check return val
+        boolean res = this.stemmer.setLanguage(lang);
+        if (!res) {
+            this.stemmer = null;
+        }
     }
 
     private int getStopWordFileId(String lang) {
