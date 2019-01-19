@@ -88,10 +88,10 @@ public class WordCloud {
                 // if intersect increment x but if x + width >= dimenWidth then make x = 0 and increment y
                 // first rect will stay in 0,0
                 int y = 0;
-                for (int x = 0; x < dimenWidth; x++) {
+                for (int x = 0; x < dimenWidth; x++) { // TODO x++ give x-Axis padding control to user
                     // set loc first
                     if (x + wordList.get(h).getWordRect().width() > dimenWidth) {
-                        y++;
+                        y++; // TODO y++ give y-Axis padding control to user
                         x = 0;
                         continue;
                     }
