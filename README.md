@@ -12,7 +12,7 @@ Maven:
 <dependency>
     <groupId>com.mordred.wordcloud</groupId>
     <artifactId>Wordcloud</artifactId>
-    <version>1.5</version>
+    <version>1.6</version>
 </dependency>
 ```
 
@@ -20,7 +20,7 @@ Gradle:
 
 ```
 dependencies {
-    compile 'com.mordred.wordcloud:Wordcloud:1.5'
+    compile 'com.mordred.wordcloud:Wordcloud:1.6'
 }
 ```
 
