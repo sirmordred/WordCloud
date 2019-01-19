@@ -34,9 +34,9 @@ import java.io.InputStreamReader;
 import java.util.*;
 
 public class WordFrequency {
-    private static CountMap wordMap = new CountMap();
+    private CountMap wordMap = new CountMap();
     private String document = null;
-    private static List<String> stopWords = new ArrayList<>();
+    private List<String> stopWords = new ArrayList<>();
     private int minWordLength = 1;
     private SnowballStemmer stemmer = null;
 

@@ -102,13 +102,13 @@ public class WordCloud {
                     }
                 }
             }
-            float cHeight = 0;
+            int cHeight = 0;
             for (Word w3: wordList) {
-                if (w3.getY() > cHeight) {
-                    cHeight = w3.getY();
+                if (w3.getWordRect().height() > cHeight) {
+                    cHeight = w3.getWordRect().height();
                 }
             }
-            calculatedHeight = (int) cHeight;
+            calculatedHeight = cHeight;
             if (calculatedHeight > dimenHeight) {
                 // it means its too large to fit so decrease font size
                 return 0;
