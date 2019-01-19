@@ -32,6 +32,7 @@ public class Word {
     private float wordSize;
     private Rect wordRect;
     private Paint wordPaint;
+    private int yOffset = 0;
 
     public Word(String word, float wordSize, int wordColor) {
         this(word, wordSize, Typeface.create(Typeface.SANS_SERIF, Typeface.BOLD), wordColor, 255);
@@ -62,6 +63,7 @@ public class Word {
         // calculate rect
         wordRect = new Rect();
         wordPaint.getTextBounds(word, 0, word.length(), wordRect);
+        yOffset = Math.abs(wordRect.top);
     }
 
     public String getWord() {
@@ -81,6 +83,6 @@ public class Word {
     }
 
     public float getY() { // y pos for drawing into canvas
-        return wordRect.top + wordRect.height() - Math.round(wordPaint.descent() / 2); // TODO improve calibration
+        return wordRect.top + yOffset;
     }
 }
