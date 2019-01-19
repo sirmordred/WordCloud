@@ -103,9 +103,9 @@ public class WordCloud {
                 }
             }
             int cHeight = 0;
-            for (Word w3: wordList) {
-                if (w3.getWordRect().height() > cHeight) {
-                    cHeight = w3.getWordRect().height();
+            for (Word w3: wordList) { ;
+                if (w3.getWordRect().bottom > cHeight) {
+                    cHeight = w3.getWordRect().bottom;
                 }
             }
             calculatedHeight = cHeight;
