@@ -47,6 +47,8 @@ public class WordCloud {
     private int minFontSize = 10;
     private int maxColorAlphaValue = 255;
     private int minColorAlphaValue = 50;
+    private int paddingX = 1;
+    private int paddingY = 1;
     private boolean wordColorOpacityAuto = false;
     private Typeface customTypeFace = null;
 
@@ -88,10 +90,10 @@ public class WordCloud {
                 // if intersect increment x but if x + width >= dimenWidth then make x = 0 and increment y
                 // first rect will stay in 0,0
                 int y = 0;
-                for (int x = 0; x < dimenWidth; x++) { // TODO x++ give x-Axis padding control to user
+                for (int x = 0; x < dimenWidth; x+=paddingX) {
                     // set loc first
                     if (x + wordList.get(h).getWordRect().width() > dimenWidth) {
-                        y++; // TODO y++ give y-Axis padding control to user
+                        y+=paddingY;
                         x = 0;
                         continue;
                     }
@@ -258,5 +260,13 @@ public class WordCloud {
 
     public void setCustomTypeFace(Typeface customTypeFace) {
         this.customTypeFace = customTypeFace;
+    }
+
+    public void setPaddingX(int paddingX) {
+        this.paddingX = paddingX;
+    }
+
+    public void setPaddingY(int paddingY) {
+        this.paddingY = paddingY;
     }
 }

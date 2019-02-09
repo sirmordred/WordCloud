@@ -31,6 +31,8 @@ public class MainActivity extends AppCompatActivity {
 
         WordCloud wd = new WordCloud(nMap, 250, 250,Color.BLACK,Color.WHITE);
         wd.setWordColorOpacityAuto(true);
+        wd.setPaddingX(20);
+        wd.setPaddingY(20);
 
         Bitmap generatedWordCloudBmp = wd.generate();
 
