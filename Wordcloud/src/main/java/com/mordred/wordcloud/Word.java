@@ -33,7 +33,6 @@ public class Word {
     private Rect wordRect;
     private Paint wordPaint;
     private int yOffset = 0;
-    private int wordColorAlpha = 255;
     private int wordCount = 1;
 
     public Word(String word, int wordCount, float wordSize, int wordColor) {
@@ -52,13 +51,12 @@ public class Word {
         this.word = word;
         this.wordCount = wordCount;
         this.wordSize = wordSize;
-        this.wordColorAlpha = wordColorAlpha;
 
         // init Paint object
         wordPaint = new Paint();
         wordPaint.setAntiAlias(true);
         wordPaint.setColor(wordColor);
-        wordPaint.setAlpha(this.wordColorAlpha);
+        wordPaint.setAlpha(wordColorAlpha);
         wordPaint.setTextAlign(Paint.Align.LEFT);
         wordPaint.setStyle(Paint.Style.FILL);
         wordPaint.setTypeface(wordTypeFace);

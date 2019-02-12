@@ -51,6 +51,7 @@ public class WordCloud {
     private int paddingY = 1;
     private boolean wordColorOpacityAuto = false;
     private Typeface customTypeFace = null;
+    private boolean boundingYAxis = true;
 
     public WordCloud() {
         // empty constructor
@@ -194,6 +195,10 @@ public class WordCloud {
                     wordWillBeDrawed.getWordPaint());
         }
 
+        if (!boundingYAxis) {
+            return intermediateBmp;
+        }
+
         Bitmap retBmp = Bitmap.createBitmap(dimenWidth,dimenHeight,Bitmap.Config.ARGB_8888);
         Canvas retBmpCnv = new Canvas(retBmp);
         retBmpCnv.drawColor(defaultBackgroundColor); // background
@@ -267,5 +272,10 @@ public class WordCloud {
 
     public void setPaddingY(int paddingY) {
         this.paddingY = paddingY;
+    }
+
+
+    public void setBoundingYAxis(boolean boundingYAxis) {
+        this.boundingYAxis = boundingYAxis;
     }
 }
