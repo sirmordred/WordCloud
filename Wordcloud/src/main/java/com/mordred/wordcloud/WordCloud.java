@@ -83,16 +83,14 @@ public class WordCloud {
      */
     private int fit(List<Word> wordList) {
         if (wordList.size() > 0) {
-            for (Word w2: wordList) { // Place every rect to 0,0 for init
-                w2.getWordRect().offsetTo(0,0);
-            }
+            calculatedHeight = 0;
             for(int h = 1; h < wordList.size(); h++) {
                 // if intersect increment x but if x + width >= dimenWidth then make x = 0 and increment y
                 // first rect will stay in 0,0
                 int y = 0;
                 for (int x = 0; x < dimenWidth; x+=paddingX) {
                     // set loc first
-                    if (x + wordList.get(h).getWordRect().width() > dimenWidth) {
+                    if (x + wordList.get(h).getWordRect().width() + paddingX > dimenWidth) {
                         y+=paddingY;
                         x = 0;
                         continue;
@@ -103,19 +101,15 @@ public class WordCloud {
                         wordList.get(h).getWordRect().offsetTo(x, y);
                     }
                 }
-            }
-            int cHeight = 0;
-            for (Word w3: wordList) { ;
-                if (w3.getWordRect().bottom > cHeight) {
-                    cHeight = w3.getWordRect().bottom;
+                if (wordList.get(h).getWordRect().bottom > calculatedHeight) {
+                    calculatedHeight = wordList.get(h).getWordRect().bottom;
                 }
             }
-            calculatedHeight = cHeight;
             if (calculatedHeight > dimenHeight) {
                 // it means its too large to fit so decrease font size
                 return 0;
             } else {
-                // it means its perfectly fit or too small so align it to center
+                // it means its perfectly fit or too small so increase font size or align to center
                 return 1;
             }
         }
@@ -144,46 +138,51 @@ public class WordCloud {
         Collections.sort(countList, Collections.reverseOrder());
         int largestWordCnt = countList.get(0);
 
-        for (int newMaxFontSize = this.maxFontSize; newMaxFontSize > this.minFontSize;
-             newMaxFontSize--) {
-            finalWordList.clear();
-            for (Map.Entry<String, Integer> entry : wordMap.entrySet()) {
-                float calculatedTextSize = getTextSize(entry.getValue(),largestWordCnt,
-                        newMaxFontSize, this.minFontSize);
+        for (Map.Entry<String, Integer> entry : wordMap.entrySet()) {
+            float calculatedTextSize = getTextSize(entry.getValue(),largestWordCnt,
+                    this.maxFontSize, this.minFontSize);
 
-                if (wordColorOpacityAuto) {
-                    int calculatedAlphaVal = getTextColorAlpha(entry.getValue(), largestWordCnt,
-                            this.maxColorAlphaValue, this.minColorAlphaValue);
+            if (wordColorOpacityAuto) {
+                int calculatedAlphaVal = getTextColorAlpha(entry.getValue(), largestWordCnt,
+                        this.maxColorAlphaValue, this.minColorAlphaValue);
 
-                    if (customTypeFace != null) {
-                        finalWordList.add(new Word(entry.getKey(), calculatedTextSize, customTypeFace,
-                                defaultWordColor, calculatedAlphaVal));
-                    } else {
-                        finalWordList.add(new Word(entry.getKey(), calculatedTextSize,
-                                defaultWordColor, calculatedAlphaVal));
-                    }
+                if (customTypeFace != null) {
+                    finalWordList.add(new Word(entry.getKey(), entry.getValue(), calculatedTextSize, customTypeFace,
+                            defaultWordColor, calculatedAlphaVal));
                 } else {
-                    if (customTypeFace != null) {
-                        finalWordList.add(new Word(entry.getKey(), calculatedTextSize, customTypeFace,
-                                defaultWordColor));
-                    } else {
-                        finalWordList.add(new Word(entry.getKey(), calculatedTextSize,
-                                defaultWordColor));
-                    }
+                    finalWordList.add(new Word(entry.getKey(), entry.getValue(), calculatedTextSize,
+                            defaultWordColor, calculatedAlphaVal));
+                }
+            } else {
+                if (customTypeFace != null) {
+                    finalWordList.add(new Word(entry.getKey(), entry.getValue(), calculatedTextSize, customTypeFace,
+                            defaultWordColor));
+                } else {
+                    finalWordList.add(new Word(entry.getKey(), entry.getValue(), calculatedTextSize,
+                            defaultWordColor));
                 }
             }
+        }
 
+        for (int newMaxFontSize = this.maxFontSize - 1; newMaxFontSize > this.minFontSize;
+             newMaxFontSize--) {
             int fitResult = fit(finalWordList);
             if (fitResult == 1) {
                 break;
-            } else if (fitResult == -1) {
+            } else if (fitResult == 0) {
+                for (Word w: finalWordList) {
+                    float calculatedNewTextSize = getTextSize(w.getWordCount(),largestWordCnt,
+                            newMaxFontSize, this.minFontSize);
+                    w.changeTextSize(calculatedNewTextSize);
+                }
+            } else {
                 return null;
             }
         }
 
         // draw it
 
-        Bitmap intermediateBmp =  Bitmap.createBitmap(dimenWidth,calculatedHeight + 1,
+        Bitmap intermediateBmp =  Bitmap.createBitmap(dimenWidth,calculatedHeight,
                 Bitmap.Config.ARGB_8888);
         Canvas intermediateCnv = new Canvas(intermediateBmp);
         intermediateCnv.drawColor(Color.TRANSPARENT);
