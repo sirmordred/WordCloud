@@ -12,7 +12,7 @@ Maven:
 <dependency>
     <groupId>com.mordred.wordcloud</groupId>
     <artifactId>Wordcloud</artifactId>
-    <version>1.8</version>
+    <version>1.9</version>
 </dependency>
 ```
 
@@ -20,7 +20,7 @@ Gradle:
 
 ```
 dependencies {
-    compile 'com.mordred.wordcloud:Wordcloud:1.8'
+    compile 'com.mordred.wordcloud:Wordcloud:1.9'
 }
 ```
 
@@ -33,7 +33,7 @@ dependencies {
 - Variable dimension size for resulting Bitmap wordcloud image
 - Custom BackGround Color.
 - Custom TypeFace(Font) support
-- Auto-scaling opacity of words by their frequency(count) 
+- Auto-scaling opacity of words by their frequency(count)
 - Efficient Frequency Analyzer for splitting,normalizing and computing word frequency(count).
 
 ### Screenshots
