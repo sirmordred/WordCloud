@@ -36,7 +36,7 @@ import java.util.*;
 public class WordFrequency {
     private CountMap wordMap = new CountMap();
     private String document = null;
-    private List<String> stopWords = new ArrayList<>();
+    private HashSet<String> stopWords = new HashSet<>();
     private int minWordLength = 1;
     private SnowballStemmer stemmer = null;
 
@@ -100,7 +100,7 @@ public class WordFrequency {
         return stopWords.contains(word);
     }
 
-    public void setDefaultStopWords(Context ctx, String lang) { // WILL BE CALLED ONLY ONCE
+    public void setDefaultStopWords(Context ctx, String lang) {
         if (stopWords.size() == 0) {
             int stopWordFileId = getStopWordFileId(lang);
             if (stopWordFileId == 0) {

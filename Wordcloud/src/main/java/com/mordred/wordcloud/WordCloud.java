@@ -85,23 +85,28 @@ public class WordCloud {
     private int fit(List<Word> wordList) {
         if (wordList.size() > 0) {
             calculatedHeight = 0;
+
+            int tempX = wordList.get(0).getWordRect().width();
+            int tempY = wordList.get(0).getWordRect().height();
             for(int h = 1; h < wordList.size(); h++) {
-                // if intersect increment x but if x + width >= dimenWidth then make x = 0 and increment y
-                // first rect will stay in 0,0
-                int y = 0;
-                for (int x = 0; x < dimenWidth; x+=paddingX) {
-                    // set loc first
-                    if (x + wordList.get(h).getWordRect().width() + paddingX > dimenWidth) {
-                        y+=paddingY;
-                        x = 0;
-                        continue;
-                    }
-                    if (!isWordIntersectWithOthers(wordList.get(h), wordList)) {
-                        break;
-                    } else {
-                        wordList.get(h).getWordRect().offsetTo(x, y);
-                    }
+                if (tempX + wordList.get(h).getWordRect().width() + paddingX > dimenWidth) {
+                    wordList.get(h).getWordRect().offsetTo(0, tempY + paddingY);
+                    tempY += (wordList.get(h).getWordRect().height() + paddingY);
+                    tempX = wordList.get(h).getWordRect().width();
+                } else {
+                    wordList.get(h).getWordRect().offsetTo(tempX + paddingX, 0);
+                    tempX += (wordList.get(h).getWordRect().width() + paddingX);
                 }
+                Rect intersectRect = isWordIntersectWithOthers(wordList.get(h), wordList);
+                while (intersectRect != null) {
+                    int diffY = Math.abs(intersectRect.bottom - wordList.get(h).getWordRect().top);
+                    wordList.get(h).getWordRect().offsetTo(wordList.get(h).getWordRect().left,
+                            wordList.get(h).getWordRect().top + diffY);
+                    intersectRect = isWordIntersectWithOthers(wordList.get(h), wordList);
+                }
+                wordList.get(h).getWordRect().offsetTo(wordList.get(h).getWordRect().left,
+                        wordList.get(h).getWordRect().top + paddingY);
+
                 if (wordList.get(h).getWordRect().bottom > calculatedHeight) {
                     calculatedHeight = wordList.get(h).getWordRect().bottom;
                 }
@@ -117,15 +122,15 @@ public class WordCloud {
         return -1;
     }
 
-    private boolean isWordIntersectWithOthers(Word w, List<Word> wordList) {
+    private Rect isWordIntersectWithOthers(Word w, List<Word> wordList) {
         if (wordList.size() > 0) {
             for (Word wd: wordList) {
                 if (!w.equals(wd) && Rect.intersects(w.getWordRect(), wd.getWordRect())) {
-                    return true;
+                    return wd.getWordRect();
                 }
             }
         }
-        return false;
+        return null;
     }
 
     public Bitmap generate() { // TODO shuffle wordlist
@@ -168,6 +173,9 @@ public class WordCloud {
         for (int newMaxFontSize = this.maxFontSize - 1; newMaxFontSize > this.minFontSize;
              newMaxFontSize--) {
             int fitResult = fit(finalWordList);
+            if (!boundingYAxis) {
+                break;
+            }
             if (fitResult == 1) {
                 break;
             } else if (fitResult == 0) {
