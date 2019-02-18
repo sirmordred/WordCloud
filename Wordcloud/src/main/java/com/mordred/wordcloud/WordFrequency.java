@@ -45,9 +45,9 @@ public class WordFrequency {
     }
 
     public void insertWord(String word) {
-        String[] dirtyWordArr = word.split("\\s+");
-        for (String dirtyWord: dirtyWordArr) {
-            String cleanWord = dirtyWord.replaceAll("[^\\p{L} ]", "").toLowerCase();
+        String sentence = word.toLowerCase();
+        for (String dirtyWord: sentence.split("\\s+")) {
+            String cleanWord = dirtyWord.replaceAll("[^\\p{L} ]", "");
             if (cleanWord.length() > minWordLength) {
                 if (stemmer != null) {
                     cleanWord = stemmer.stem(cleanWord);
@@ -56,6 +56,35 @@ public class WordFrequency {
                     wordMap.add(cleanWord);
                 }
             }
+        }
+    }
+
+    public void insertWordNonNormalized(String word) { // Should be used on huge datasets
+        String sentence = word.toLowerCase();
+        for (String cleanWord: sentence.split(" ")) {
+            if (!isStopWord(cleanWord)) {
+                wordMap.add(cleanWord);
+            }
+        }
+    }
+
+    public void insertWordSemiNormalized(String word) { // Should be used on huge datasets
+        String sentence = word.toLowerCase();
+        for (String dirtyWord: sentence.split(" ")) {
+            String cleanWord = removeLeadAndTrailNonLetters(dirtyWord);
+            if (cleanWord != null && !isStopWord(cleanWord)) {
+                wordMap.add(cleanWord);
+            }
+        }
+    }
+
+    public void insertWordAlreadyNormalized(String word) {
+        wordMap.add(word);
+    }
+
+    public void insertWordList(List<String> words) {
+        for (String word: words) {
+            wordMap.add(word);
         }
     }
 
@@ -278,5 +307,42 @@ public class WordFrequency {
             default:
                 return 0;
         }
+    }
+
+    /* Developed by @sirmordred for replacement of classic-slow regex replaceAll() functions
+     *
+     * It removes leading and trailing non-letters (letters are unicode standart letters and
+     * non-letters are complement of them)
+     *
+     *
+     * Returns Null if given String or processed String has less than 2 chars
+     */
+    private static String removeLeadAndTrailNonLetters(String s) {
+        if (s.length() < 2) {
+            return null;
+        }
+        int beginIndex = 0;
+        int endIndex = s.length() - 1;
+        int loopCount = endIndex;
+        boolean beginIndexFound = false;
+        boolean endIndexFound = false;
+        int loopIndex = 0;
+        while (loopIndex < loopCount) {
+            if (!beginIndexFound && Character.isLetter(s.charAt(beginIndex++))) {
+                beginIndexFound = true;
+            }
+            if (!endIndexFound && Character.isLetter(s.charAt(endIndex--))) {
+                endIndexFound = true;
+            }
+            if (beginIndexFound && endIndexFound) {
+                if (endIndex - beginIndex == -2) {
+                    return null;
+                } else {
+                    return s.substring(beginIndex - 1,endIndex + 2);
+                }
+            }
+            loopIndex++;
+        }
+        return null;
     }
 }

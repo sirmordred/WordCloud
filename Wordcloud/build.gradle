@@ -15,7 +15,7 @@ ext {
     siteUrl = 'https://github.com/sirmordred/WordCloud'
     gitUrl = 'https://github.com/sirmordred/WordCloud.git'
 
-    libraryVersion = '2.0'
+    libraryVersion = '2.3'
 
     developerId = 'sirmordred'
     developerName = 'Oguzhan Yigit'
@@ -32,7 +32,7 @@ android {
         minSdkVersion 19
         targetSdkVersion 28
         versionCode 1
-        versionName "2.0"
+        versionName "2.3"
 
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
 
