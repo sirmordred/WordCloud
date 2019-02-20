@@ -130,60 +130,56 @@ public class WordFrequency {
     }
 
     public void setDefaultStopWords(Context ctx, String lang) {
-        if (stopWords.size() == 0) {
-            int stopWordFileId = getStopWordFileId(lang);
-            if (stopWordFileId == 0) {
-                return;
-            }
-            StringBuilder text = new StringBuilder();
-            InputStream is = null;
-            InputStreamReader isr = null;
-            BufferedReader br = null;
-            try {
-                is = ctx.getResources().openRawResource(stopWordFileId);
-                isr = new InputStreamReader(is);
-                br = new BufferedReader(isr);
+        int stopWordFileId = getStopWordFileId(lang);
+        if (stopWordFileId == 0) {
+            return;
+        }
+        StringBuilder text = new StringBuilder();
+        InputStream is = null;
+        InputStreamReader isr = null;
+        BufferedReader br = null;
+        try {
+            is = ctx.getResources().openRawResource(stopWordFileId);
+            isr = new InputStreamReader(is);
+            br = new BufferedReader(isr);
 
-                String line;
-                while ((line = br.readLine()) != null) {
-                    text.append(line);
-                    text.append('\n');
+            String line;
+            while ((line = br.readLine()) != null) {
+                text.append(line);
+                text.append('\n');
+            }
+        } catch (IOException e) {
+            // empty
+        } finally {
+            try {
+                if (br != null) {
+                    br.close();
+                }
+
+                if (isr != null) {
+                    isr.close();
+                }
+
+                if (is != null) {
+                    is.close();
                 }
             } catch (IOException e) {
                 // empty
-            } finally {
-                try {
-                    if (br != null) {
-                        br.close();
-                    }
-
-                    if (isr != null) {
-                        isr.close();
-                    }
-
-                    if (is != null) {
-                        is.close();
-                    }
-                } catch (IOException e) {
-                    // empty
-                }
             }
+        }
 
-            if (text.length() > 2) {
-                text.deleteCharAt(0); // remove first [ from json
-                text.deleteCharAt(text.length() - 1); // remove last [ from json
+        if (text.length() > 2) {
+            text.deleteCharAt(0); // remove first [ from json
+            text.deleteCharAt(text.length() - 1); // remove last [ from json
 
-                String stopwordsArr[] = text.toString().replace("\"","").
-                        split(",");
-                stopWords.addAll(Arrays.asList(stopwordsArr));
-            }
+            String stopwordsArr[] = text.toString().replace("\"","").
+                    split(",");
+            stopWords.addAll(Arrays.asList(stopwordsArr));
         }
     }
 
-    public void setCustomStopWords(List<String> customStopWords) {
-        if (stopWords.size() == 0) {
-            stopWords.addAll(customStopWords);
-        }
+    public void setCustomStopWords(HashSet<String> customStopWords) {
+        stopWords.addAll(customStopWords);
     }
 
     public void setDocument(String document) {
