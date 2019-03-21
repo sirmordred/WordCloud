@@ -189,6 +189,12 @@ public class WordCloud {
             }
         }
 
+        // TODO exception here: calculatedHeight is becoming 0 sometimes
+        // Hotfix: if it is 0, assign dimenHeight to calculatedHeight, IT IS WORKAROUND, remove when its fully fixed
+        if (calculatedHeight <= 0) {
+            calculatedHeight = dimenHeight;
+        }
+
         // draw it
 
         Bitmap intermediateBmp =  Bitmap.createBitmap(dimenWidth,calculatedHeight,
