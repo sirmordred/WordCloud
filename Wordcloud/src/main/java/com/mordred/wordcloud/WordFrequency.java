@@ -79,12 +79,16 @@ public class WordFrequency {
     }
 
     public void insertWordAlreadyNormalized(String word) {
-        wordMap.add(word);
+        if (!isStopWord(word)) {
+            wordMap.add(word);
+        }
     }
 
     public void insertWordList(List<String> words) {
         for (String word: words) {
-            wordMap.add(word);
+            if (!isStopWord(word)) {
+                wordMap.add(word);
+            }
         }
     }
 
